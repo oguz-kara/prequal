@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "batch": "tsx scripts/batch.mts"
+    "batch": "tsx --env-file=.env.local scripts/batch.mts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.0.0",
