@@ -38,9 +38,16 @@ build" notu zorunlu.
       (taban: n8n template #15418, kaynak README'de kredilendirilir)
 
 **v3 — dashboard (omurga)**
-- [ ] Müşteri başına: işlenen lead, HOT oranı, HOT başına enrichment çağrısı,
-      override oranı
-- [ ] (Omurga Kiranism starter'a taşınırsa bu sayfalar oraya göçer)
+- [x] `/leads`: tier/müşteri filtreli tablo, satır açılınca gerekçeler +
+      açılış cümlesi; MOCK rozeti
+- [x] `/dashboard`: toplam işlenen / HOT oranı / kaçınılan enrichment
+      çağrısı kartları + müşteri başına tier dağılım çubukları; MOCK banner
+- [ ] Override oranı (temsilci skoru değiştirdi metriği) — HubSpot geri
+      beslemesi gelince
+- **Plan sapması (2026-08-30):** omurga (Kiranism) bu projede DEĞİL, Proje
+  2 başlarken ayrı repo olarak kurulacak — dosya-store'lu boş dashboard'a
+  ayrı repo açmak erken; Postgres'e geçişle birlikte göç edilir. ROADMAP'teki
+  "omurga Kiranism burada doğar" notu buna göre okunmalı.
 
 **Teknik borç (tabandan):** ~~API route'lar Exa client'ını modül yüklenirken
 kuruyordu~~ → 2026-08-30'da 18 route handler-içi (lazy) kuruluma çevrildi;
