@@ -31,6 +31,10 @@ build" notu zorunlu.
       override oranı
 - [ ] (Omurga Kiranism starter'a taşınırsa bu sayfalar oraya göçer)
 
+**Teknik borç (tabandan):** API route'lar Exa/Anthropic client'ını modül
+yüklenirken kuruyor → env anahtarı olmadan build kırılıyor. v1'de lazy-init'e
+çevrilecek (build placeholder anahtar istemesin).
+
 **Kapsam dışı:** auth (demo basic-auth yeter), e-posta gönderimi, çoklu
 workspace, gerçek müşteri verisi.
 
