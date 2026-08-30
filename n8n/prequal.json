@@ -1,0 +1,117 @@
+{
+  "name": "Prequal — Inbound Lead Qualification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "prequal-lead",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "wh-1",
+      "name": "Inbound Lead Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "prequal-lead"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3000/api/score",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"domain\": \"{{ $json.body.domain }}\", \"client\": \"{{ $json.body.client }}\"}",
+        "options": {}
+      },
+      "id": "score-1",
+      "name": "Prequal Score (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.tier }}",
+              "rightValue": "HOT",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-hot",
+      "name": "Is HOT?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.tier }}",
+              "rightValue": "REVIEW",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-review",
+      "name": "Is REVIEW?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [660, 120]
+    },
+    {
+      "parameters": {},
+      "id": "noop-hot",
+      "name": "HOT → rep alerted (Slack + HubSpot deal via Prequal)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [660, -120]
+    },
+    {
+      "parameters": {},
+      "id": "noop-review",
+      "name": "REVIEW → human review queue (/leads)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [880, 40]
+    },
+    {
+      "parameters": {},
+      "id": "noop-cold",
+      "name": "COLD → CRM log only, no outreach",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [880, 200]
+    }
+  ],
+  "connections": {
+    "Inbound Lead Webhook": { "main": [[{ "node": "Prequal Score (Claude)", "type": "main", "index": 0 }]] },
+    "Prequal Score (Claude)": { "main": [[{ "node": "Is HOT?", "type": "main", "index": 0 }]] },
+    "Is HOT?": {
+      "main": [
+        [{ "node": "HOT → rep alerted (Slack + HubSpot deal via Prequal)", "type": "main", "index": 0 }],
+        [{ "node": "Is REVIEW?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is REVIEW?": {
+      "main": [
+        [{ "node": "REVIEW → human review queue (/leads)", "type": "main", "index": 0 }],
+        [{ "node": "COLD → CRM log only, no outreach", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}

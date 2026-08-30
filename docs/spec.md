@@ -34,8 +34,9 @@ build" notu zorunlu.
 - [x] Mock modu: `PREQUAL_MOCK=1` — Exa/Claude/HubSpot/Slack çağrısı yapmadan
       deterministik etiketli sonuç; MOCK koşu özeti "NOT for portfolio
       numbers" damgalı; mock rakamları README Measured'a ASLA girmez
-- [ ] n8n workflow (`n8n/prequal.json`): inbound form → skor → yönlendirme
-      (taban: n8n template #15418, kaynak README'de kredilendirilir)
+- [x] n8n workflow (`n8n/prequal.json`): webhook → /api/score → IF dalları
+      (HOT / REVIEW / COLD); self-hosted Docker kurulumu + curl testi
+      n8n/README.md'de (taban fikir: template #15418, kredilendirildi)
 
 **v3 — dashboard (omurga)**
 - [x] `/leads`: tier/müşteri filtreli tablo, satır açılınca gerekçeler +
