@@ -64,19 +64,19 @@ export default async function DashboardPage() {
 
       <div className="space-y-4">
         {stats.map((s) => (
-          <div key={s.clientId} className="rounded-xl border border-slate-200 bg-white p-5">
+          <div key={s.clientId} className="rounded-xl border border-pq-ash bg-white p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-semibold text-slate-800">{s.clientId}</h2>
-              <span className="text-sm text-slate-500">
+              <h2 className="font-semibold text-pq-ink">{s.clientId}</h2>
+              <span className="text-[13px] text-pq-fog">
                 {s.total} leads · avg {s.avgScore.toFixed(1)}/10
               </span>
             </div>
-            <div className="flex h-3 overflow-hidden rounded-full bg-slate-100">
-              {s.hot > 0 && <div className="bg-orange-400" style={{ width: `${(s.hot / s.total) * 100}%` }} />}
-              {s.review > 0 && <div className="bg-amber-300" style={{ width: `${(s.review / s.total) * 100}%` }} />}
-              {s.cold > 0 && <div className="bg-slate-300" style={{ width: `${(s.cold / s.total) * 100}%` }} />}
+            <div className="flex h-3 overflow-hidden rounded-full bg-pq-mist">
+              {s.hot > 0 && <div className="bg-pq-tangerine" style={{ width: `${(s.hot / s.total) * 100}%` }} />}
+              {s.review > 0 && <div className="bg-yellow-300" style={{ width: `${(s.review / s.total) * 100}%` }} />}
+              {s.cold > 0 && <div className="bg-pq-smoke" style={{ width: `${(s.cold / s.total) * 100}%` }} />}
             </div>
-            <div className="mt-3 flex gap-4 text-xs text-slate-500">
+            <div className="mt-3 flex gap-4 text-[12px] text-pq-fog">
               <span className="flex items-center gap-1.5">
                 <TierBadge tier="HOT" /> {s.hot}
               </span>
@@ -90,9 +90,9 @@ export default async function DashboardPage() {
           </div>
         ))}
         {stats.length === 0 && (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-10 text-center text-slate-400">
-            No data yet — run <code className="rounded bg-slate-100 px-1">npm run batch</code> (or with{' '}
-            <code className="rounded bg-slate-100 px-1">PREQUAL_MOCK=1</code>).
+          <p className="rounded-xl border border-dashed border-pq-smoke bg-white px-4 py-10 text-center text-pq-silver">
+            No data yet — run <code className="rounded bg-pq-mist px-1">npm run batch</code> (or with{' '}
+            <code className="rounded bg-pq-mist px-1">PREQUAL_MOCK=1</code>).
           </p>
         )}
       </div>
@@ -102,10 +102,10 @@ export default async function DashboardPage() {
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+    <div className="rounded-xl border border-pq-ash bg-white p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-pq-fog">{label}</p>
+      <p className="mt-2 font-display text-3xl font-medium tracking-tight text-pq-ink">{value}</p>
+      {hint && <p className="mt-1 text-[12px] text-pq-fog">{hint}</p>}
     </div>
   );
 }

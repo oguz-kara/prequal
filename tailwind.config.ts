@@ -9,7 +9,27 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			display: ['Satoshi', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			app: ['var(--font-inter)', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+  		},
   		colors: {
+  			'pq-canvas': '#ffffff',
+  			'pq-mist': '#f5f5f5',
+  			'pq-alt': '#fafafa',
+  			'pq-ash': '#e5e5e5',
+  			'pq-smoke': '#d4d4d4',
+  			'pq-ink': '#0a0a0a',
+  			'pq-charcoal': '#171717',
+  			'pq-slate': '#404040',
+  			'pq-fog': '#737373',
+  			'pq-silver': '#a3a3a3',
+  			'pq-blue': '#2563eb',
+  			'pq-sapphire': '#1e40af',
+  			'pq-mint': '#dcfce7',
+  			'pq-green': '#16a34a',
+  			'pq-tangerine': '#ea580c',
+  			'pq-lavender': '#7c3aed',
   			foreground: 'hsl(var(--foreground))',
   			'background-start': 'rgb(var(--background-start-rgb))',
   			'background-end': 'rgb(var(--background-end-rgb))',

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from '@vercel/analytics/next';
 
@@ -21,17 +22,19 @@ const reckless = localFont({
   variable: "--font-reckless",
 });
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+
 export const metadata: Metadata = {
-  title: "Company Researcher",
-  description: "Instantly get detailed research insights and know everything about any company inside out.",
+  title: "Prequal — AI Lead Research & ICP Scoring",
+  description: "Research any company, score it against your client\u0027s ICP with Claude, and route HOT leads to your CRM.",
   openGraph: {
-    title: 'Company Researcher',
+    title: 'Prequal',
     description: 'Instantly get detailed research insights and know everything about any company inside out.',
     images: ['https://companyresearcher.exa.ai/opengraph-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Company Researcher',
+    title: 'Prequal',
     description: 'Instantly get detailed research insights and know everything about any company inside out.',
     images: ['https://companyresearcher.exa.ai/opengraph-image.jpg'],
   },
@@ -44,8 +47,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Satoshi (display) — Fontshare */}
+        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700&display=swap" rel="stylesheet" />
+      </head>
       <body
-        className={`${abcdDiatype.variable} ${reckless.variable} antialiased`}
+        className={`${abcdDiatype.variable} ${reckless.variable} ${inter.variable} antialiased`}
       >
         {children}
         <Analytics />

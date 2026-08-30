@@ -4,15 +4,18 @@
 import { useMemo, useState } from 'react';
 import type { ScoredLead, Tier } from '@/lib/score';
 
-const tierStyles: Record<Tier, string> = {
-  HOT: 'bg-orange-100 text-orange-700 border-orange-200',
-  REVIEW: 'bg-amber-50 text-amber-700 border-amber-200',
-  COLD: 'bg-slate-100 text-slate-600 border-slate-200',
+// Status badge per design system: tinted pill + colored dot + dark text.
+const tierStyles: Record<Tier, { pill: string; dot: string }> = {
+  HOT: { pill: 'bg-orange-50', dot: 'bg-pq-tangerine' },
+  REVIEW: { pill: 'bg-yellow-50', dot: 'bg-yellow-500' },
+  COLD: { pill: 'bg-pq-mist', dot: 'bg-pq-silver' },
 };
 
 export function TierBadge({ tier }: { tier: Tier }) {
+  const t = tierStyles[tier];
   return (
-    <span className={`inline-block rounded-full border px-2 py-0.5 text-xs font-semibold ${tierStyles[tier]}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-pq-charcoal ${t.pill}`}>
+      <span className={`inline-block h-1.5 w-1.5 rounded-full ${t.dot}`} />
       {tier}
     </span>
   );
@@ -35,8 +38,8 @@ export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
           <button
             key={t}
             onClick={() => setTier(t)}
-            className={`rounded-full border px-3 py-1 text-sm ${
-              tier === t ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+            className={`rounded-full px-4 py-1.5 text-[13px] font-medium ${
+              tier === t ? 'bg-pq-charcoal text-white' : 'text-pq-slate hover:bg-pq-mist'
             }`}
           >
             {t}
@@ -45,7 +48,7 @@ export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
         <select
           value={client}
           onChange={(e) => setClient(e.target.value)}
-          className="ml-auto rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700"
+          className="ml-auto rounded-[6px] border border-pq-ink bg-white px-3 py-1.5 text-[13px] text-pq-charcoal"
         >
           <option value="ALL">All clients</option>
           {clients.map((c) => (
@@ -56,9 +59,9 @@ export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
         </select>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+      <div className="overflow-x-auto rounded-xl border border-pq-ash bg-white">
+        <table className="w-full text-left text-[14px]">
+          <thead className="border-b border-pq-ash bg-pq-alt text-[11px] uppercase tracking-wide text-pq-fog">
             <tr>
               <th className="px-4 py-3">Domain</th>
               <th className="px-4 py-3">Client</th>
@@ -83,8 +86,8 @@ export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
-                  No leads match this filter. Run <code className="rounded bg-slate-100 px-1">npm run batch</code> first.
+                <td colSpan={6} className="px-4 py-8 text-center text-pq-silver">
+                  No leads match this filter. Run <code className="rounded bg-pq-mist px-1">npm run batch</code> first.
                 </td>
               </tr>
             )}
@@ -110,28 +113,28 @@ function FragmentRow({
     <>
       <tr
         onClick={onToggle}
-        className={`cursor-pointer border-b border-slate-100 hover:bg-slate-50 ${zebra ? 'bg-slate-50/40' : ''}`}
+        className={`cursor-pointer border-b border-pq-ash hover:bg-pq-mist/60 ${zebra ? 'bg-pq-alt' : ''}`}
       >
-        <td className="px-4 py-3 font-medium text-slate-800">
+        <td className="px-4 py-3 font-medium text-pq-ink">
           {lead.domain}
           {lead.mock && (
-            <span className="ml-2 rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700">
+            <span className="ml-2 rounded-full bg-pq-mist px-2 py-0.5 text-[10px] font-semibold text-pq-lavender">
               MOCK
             </span>
           )}
         </td>
-        <td className="px-4 py-3 text-slate-600">{lead.clientId}</td>
-        <td className="px-4 py-3 font-semibold text-slate-800">{lead.score}/10</td>
+        <td className="px-4 py-3 text-pq-slate">{lead.clientId}</td>
+        <td className="px-4 py-3 font-semibold text-pq-ink">{lead.score}/10</td>
         <td className="px-4 py-3">
           <TierBadge tier={lead.tier} />
         </td>
-        <td className="px-4 py-3 text-slate-500">{new Date(lead.scoredAt).toLocaleDateString()}</td>
-        <td className="px-4 py-3 text-slate-400">{isOpen ? '▾' : '▸'}</td>
+        <td className="px-4 py-3 text-pq-fog">{new Date(lead.scoredAt).toLocaleDateString()}</td>
+        <td className="px-4 py-3 text-pq-silver">{isOpen ? '▾' : '▸'}</td>
       </tr>
       {isOpen && (
-        <tr className="border-b border-slate-100 bg-slate-50/60">
+        <tr className="border-b border-pq-ash bg-pq-alt">
           <td colSpan={6} className="px-6 py-4">
-            <dl className="grid gap-3 text-sm sm:grid-cols-2">
+            <dl className="grid gap-3 text-[14px] sm:grid-cols-2">
               <Rationale label="Fit" value={lead.fit} />
               <Rationale label="Signal" value={lead.signal} />
               <Rationale label="Timing" value={lead.timing} />
@@ -147,8 +150,8 @@ function FragmentRow({
 function Rationale({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</dt>
-      <dd className="mt-1 text-slate-700">{value}</dd>
+      <dt className="text-[11px] font-semibold uppercase tracking-wide text-pq-silver">{label}</dt>
+      <dd className="mt-1 text-pq-charcoal">{value}</dd>
     </div>
   );
 }
