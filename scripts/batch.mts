@@ -5,8 +5,11 @@
 // portfolio card (docs/spec.md — measurement protocol).
 import { promises as fs } from 'fs';
 import path from 'path';
-import { scoreLead, type ScoredLead } from '../lib/score';
+import { isMock, scoreLead, type ScoredLead } from '../lib/score';
 import { saveLeads } from '../lib/store';
+import { upsertLead } from '../lib/hubspot';
+import { postHotAlert } from '../lib/slack';
+import { enrichHotLead, enrichmentCalls } from '../lib/enrich';
 
 const args = process.argv.slice(2);
 const flag = (name: string) => {
@@ -38,8 +41,15 @@ async function main() {
     try {
       const lead = await scoreLead(row.domain, row.client);
       results.push(lead);
+      let syncNote = '';
+      if (lead.tier === 'HOT') {
+        const enrich = await enrichHotLead(lead);
+        const hubspot = await upsertLead(lead);
+        const slack = await postHotAlert(lead, hubspot);
+        syncNote = `  → ${hubspot.action}; slack: ${slack}; ${enrich.detail}`;
+      }
       console.log(
-        `${lead.tier.padEnd(6)} ${String(lead.score).padStart(2)}/10  ${lead.domain.padEnd(24)} ${lead.clientId.padEnd(14)} ${(lead.durationMs / 1000).toFixed(1)}s`
+        `${lead.tier.padEnd(6)} ${String(lead.score).padStart(2)}/10  ${lead.domain.padEnd(24)} ${lead.clientId.padEnd(14)} ${(lead.durationMs / 1000).toFixed(1)}s${syncNote}`
       );
     } catch (err) {
       failures.push({ domain: row.domain, error: String(err) });
@@ -62,12 +72,16 @@ async function main() {
   const tiers = { HOT: 0, REVIEW: 0, COLD: 0 } as Record<string, number>;
   for (const r of results) tiers[r.tier]++;
 
-  console.log(`\n--- Measured (${new Date().toISOString().slice(0, 10)}) ---`);
+  console.log(
+    isMock()
+      ? `\n--- MOCK RUN (${new Date().toISOString().slice(0, 10)}) — NOT for portfolio numbers ---`
+      : `\n--- Measured (${new Date().toISOString().slice(0, 10)}) ---`
+  );
   console.log(`leads scored:        ${n} (${failures.length} failed)`);
   console.log(`avg time per lead:   ${(avgMs / 1000).toFixed(1)}s`);
   console.log(`tiers:               HOT ${tiers.HOT} · REVIEW ${tiers.REVIEW} · COLD ${tiers.COLD}`);
   console.log(`tokens (in/out):     ${tokens.in} / ${tokens.out}`);
-  console.log(`paid enrichment:     0 calls (v1 — enrichment is HOT-only, lands in v2)`);
+  console.log(`paid enrichment:     ${enrichmentCalls()} calls (stub, HOT-only)`);
   console.log(`run file:            ${path.relative(process.cwd(), runFile)}`);
 }
 

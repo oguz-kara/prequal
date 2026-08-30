@@ -3,6 +3,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { scoreLead } from '@/lib/score';
 import { saveLeads } from '@/lib/store';
+import { upsertLead } from '@/lib/hubspot';
+import { postHotAlert } from '@/lib/slack';
+import { enrichHotLead } from '@/lib/enrich';
 
 export const maxDuration = 100;
 
@@ -15,6 +18,13 @@ export async function POST(req: NextRequest) {
 
     const lead = await scoreLead(domain, client);
     await saveLeads([lead]);
+
+    if (lead.tier === 'HOT') {
+      const enrich = await enrichHotLead(lead);
+      const hubspot = await upsertLead(lead);
+      const slack = await postHotAlert(lead, hubspot);
+      return NextResponse.json({ ...lead, sync: { enrich: enrich.detail, hubspot, slack } });
+    }
 
     return NextResponse.json(lead);
   } catch (error) {

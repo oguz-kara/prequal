@@ -25,9 +25,15 @@ build" notu zorunlu.
       20 domain) → README "Measured" bölümüne
 
 **v2 — entegrasyonlar**
-- [ ] HubSpot upsert: contact/company/open-deal kontrolü → update-or-create
-- [ ] HOT-only enrichment adımı (stub → gerçek sağlayıcı opsiyonel)
-- [ ] Slack webhook: HOT alert + önerilen açılış cümlesi
+- [x] HubSpot upsert (`lib/hubspot.ts`): company domain araması →
+      update-or-create; HOT'ta mevcut deal kontrolü (dedupe) → yoksa deal +
+      default association; token yoksa/mock'ta simüle sonuç
+- [x] HOT-only enrichment stub (`lib/enrich.ts`) — çağrı sayacı batch
+      özetinde; gerçek sağlayıcı opsiyonel
+- [x] Slack webhook (`lib/slack.ts`): HOT alert + gerekçeler + açılış cümlesi
+- [x] Mock modu: `PREQUAL_MOCK=1` — Exa/Claude/HubSpot/Slack çağrısı yapmadan
+      deterministik etiketli sonuç; MOCK koşu özeti "NOT for portfolio
+      numbers" damgalı; mock rakamları README Measured'a ASLA girmez
 - [ ] n8n workflow (`n8n/prequal.json`): inbound form → skor → yönlendirme
       (taban: n8n template #15418, kaynak README'de kredilendirilir)
 

@@ -30,10 +30,36 @@ export interface ScoredLead {
   usage: { inputTokens: number; outputTokens: number };
   durationMs: number;
   scoredAt: string;
+  mock?: boolean;
 }
 
 export function tierFor(score: number): Tier {
   return score >= 7 ? 'HOT' : score >= 4 ? 'REVIEW' : 'COLD';
+}
+
+export const isMock = () => process.env.PREQUAL_MOCK === '1';
+
+// Deterministic fake result so UI/integration work can proceed without API
+// credits. Mock output is labeled and must NEVER feed the README "Measured"
+// section or portfolio cards.
+function mockLead(domain: string, clientId: string): ScoredLead {
+  const hash = [...domain].reduce((a, c) => a + c.charCodeAt(0), 0);
+  const score = hash % 11;
+  return {
+    domain,
+    clientId,
+    score,
+    tier: tierFor(score),
+    fit: `[MOCK] ${domain} loosely matches the ${clientId} profile.`,
+    signal: `[MOCK] Careers page suggests active hiring at ${domain}.`,
+    timing: `[MOCK] No strong timing signal found for ${domain}.`,
+    opener: `[MOCK] Noticed ${domain} is growing its team — quick question about your outbound stack.`,
+    researchSummary: '[MOCK] No research performed (PREQUAL_MOCK=1).',
+    usage: { inputTokens: 0, outputTokens: 0 },
+    durationMs: 40 + (hash % 60),
+    scoredAt: new Date().toISOString(),
+    mock: true,
+  };
 }
 
 export async function researchDomain(domain: string) {
@@ -54,6 +80,7 @@ export async function researchDomain(domain: string) {
 }
 
 export async function scoreLead(domain: string, clientId: string): Promise<ScoredLead> {
+  if (isMock()) return mockLead(domain, clientId);
   const started = Date.now();
   const icp = await loadIcp(clientId);
   const research = await researchDomain(domain);
