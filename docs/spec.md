@@ -48,6 +48,9 @@ build" notu zorunlu.
 - [x] n8n workflow (`n8n/prequal.json`): webhook → /api/score → IF dalları
       (HOT / REVIEW / COLD); self-hosted Docker kurulumu + curl testi
       n8n/README.md'de (taban fikir: template #15418, kredilendirildi)
+      — **2026-08-30 uçtan uca doğrulandı:** Docker n8n'e CLI ile import
+      (workflow JSON'da `id` alanı zorunlu), aktive edildi, prod webhook →
+      /api/score → lead store'a yazım teyit edildi (dub.co → HOT, mock)
 
 **v3 — dashboard (omurga)**
 - [x] `/leads`: tier/müşteri filtreli tablo, satır açılınca gerekçeler +
