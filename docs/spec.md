@@ -24,6 +24,17 @@ build" notu zorunlu.
 - [ ] İlk gerçek ölçüm koşusu (gerçek EXA + ANTHROPIC anahtarlarıyla,
       20 domain) → README "Measured" bölümüne
 
+**Ürünleştirme + tasarım (2026-08-30):**
+- [x] Tasarım sistemi: Dub token'ları (docs/design-system) — pq-* paleti,
+      Satoshi/Inter, hairline border dili
+- [x] Ana sayfa = ürün girişi (domain'leri yapıştır + müşteri seç →
+      skorla → sonuç kartları); eski Exa araştırma vitrini `/research`'e
+      taşındı, sonuç kartından "deep research →" ile ulaşılır
+- [x] `/clients`: ICP dokümanları görünür (müşteri-başına-profil hikâyesi)
+- [x] Her sayfada tek satır "ne işe yarar" açıklaması (PageShell subtitle)
+- [ ] `/research` sayfasını da app diline çek (şimdilik eski Exa stili;
+      TRIAL fontlar yalnız orada — kaldırılacak)
+
 **v2 — entegrasyonlar**
 - [x] HubSpot upsert (`lib/hubspot.ts`): company domain araması →
       update-or-create; HOT'ta mevcut deal kontrolü (dedupe) → yoksa deal +

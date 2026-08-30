@@ -1,13 +1,20 @@
-import CompanyResearcher from "../components/CompanyResearchHome";
+// app/page.tsx — Prequal product entry: paste domains, pick a client ICP,
+// score. The old Exa research view lives at /research (linked per lead).
+import { listIcpClients } from '@/lib/icp';
+import PageShell from '@/components/leads/PageShell';
+import ScoreForm from '@/components/score/ScoreForm';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  const clients = await listIcpClients();
   return (
-    <main className="flex relative min-h-screen flex-col items-center justify-center">
-
-      {/* background grid design texture code */}
-      <div className="absolute inset-0 -z-0 w-full h-full bg-[linear-gradient(to_right,#80808012_1px,transparent_0px),linear-gradient(to_bottom,#80808012_1px,transparent_0px)] bg-[size:60px_60px]"></div>
-
-      <CompanyResearcher />
-    </main>
+    <PageShell
+      title="Score inbound leads against your client's ICP"
+      subtitle="Paste company domains. Prequal researches each one, has Claude score it 0–10 with a rationale, and routes HOT leads to Slack + HubSpot — without burning paid enrichment credits on bad leads."
+      hasMockData={process.env.PREQUAL_MOCK === '1'}
+    >
+      <ScoreForm clients={clients} />
+    </PageShell>
   );
 }
