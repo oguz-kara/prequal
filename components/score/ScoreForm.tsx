@@ -43,7 +43,7 @@ export default function ScoreForm({ clients }: { clients: string[] }) {
     <div>
       <div className="rounded-xl border border-pq-ash bg-white p-5">
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <label className="text-[13px] font-medium text-pq-slate">Score against</label>
+          <label className="text-[13px] font-medium text-pq-slate">Score for client</label>
           <select
             value={client}
             onChange={(e) => setClient(e.target.value)}
@@ -56,8 +56,11 @@ export default function ScoreForm({ clients }: { clients: string[] }) {
             ))}
           </select>
           <Link href="/clients" className="text-[13px] text-pq-blue hover:underline">
-            view ICP →
+            view this client's ICP →
           </Link>
+          <span className="basis-full text-[12px] text-pq-fog">
+            Each client has its own ideal-customer profile — the same domain can be HOT for one client and COLD for another.
+          </span>
         </div>
         <textarea
           value={input}
