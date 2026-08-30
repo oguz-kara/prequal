@@ -13,11 +13,16 @@ build" notu zorunlu.
 ## Kapsam
 
 **v1 — çekirdek akış**
-- [ ] Batch CSV yükleme (domain listesi) + tekil domain girişi (mevcut UI)
-- [ ] ICP dokümanı: `data/icp/<client>.md` (düzenlenebilir markdown)
-- [ ] Skor endpoint'i: Claude → `{score: 0-10, fit, signal, timing}` (Zod)
-- [ ] Eşikler: ≥7 HOT · 4–6 REVIEW · ≤3 COLD
-- [ ] `/leads` tablosu (Postgres): domain, müşteri, skor, gerekçe, durum
+- [x] Batch CSV işleme: `npm run batch` (`scripts/batch.mts`, --limit/--client
+      bayrakları, ölçüm özeti) — UI'dan CSV yükleme v3'e kaldı
+- [x] ICP dokümanı: `data/icp/<client>.md` (`lib/icp.ts`)
+- [x] Skor çekirdeği + endpoint: `lib/score.ts` + `POST /api/score` —
+      `{score 0-10, fit, signal, timing, opener}` (Zod), tier kod tarafında
+- [x] Eşikler: ≥7 HOT · 4–6 REVIEW · ≤3 COLD (`tierFor`)
+- [x] Lead store v1: `data/out/leads.json` dosya tabanlı (`lib/store.ts`) —
+      Postgres'e geçiş v2'de (HubSpot + dashboard ile birlikte)
+- [ ] İlk gerçek ölçüm koşusu (gerçek EXA + ANTHROPIC anahtarlarıyla,
+      20 domain) → README "Measured" bölümüne
 
 **v2 — entegrasyonlar**
 - [ ] HubSpot upsert: contact/company/open-deal kontrolü → update-or-create
@@ -31,9 +36,9 @@ build" notu zorunlu.
       override oranı
 - [ ] (Omurga Kiranism starter'a taşınırsa bu sayfalar oraya göçer)
 
-**Teknik borç (tabandan):** API route'lar Exa/Anthropic client'ını modül
-yüklenirken kuruyor → env anahtarı olmadan build kırılıyor. v1'de lazy-init'e
-çevrilecek (build placeholder anahtar istemesin).
+**Teknik borç (tabandan):** ~~API route'lar Exa client'ını modül yüklenirken
+kuruyordu~~ → 2026-08-30'da 18 route handler-içi (lazy) kuruluma çevrildi;
+build artık anahtarsız geçiyor.
 
 **Kapsam dışı:** auth (demo basic-auth yeter), e-posta gönderimi, çoklu
 workspace, gerçek müşteri verisi.
