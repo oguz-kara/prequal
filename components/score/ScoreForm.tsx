@@ -1,10 +1,9 @@
 'use client';
-// components/score/ScoreForm.tsx — the product entry: paste one or more
-// domains, pick the client whose ICP to score against, get scored cards.
+// components/score/ScoreForm.tsx — product entry: paste domains, pick the
+// client whose ICP to score against, get scored results.
 import { useState } from 'react';
-import Link from 'next/link';
-import { TierBadge } from '@/components/leads/LeadsTable';
 import type { ScoredLead } from '@/lib/score';
+import { Button, Card, CardBody, Label, MockChip, Mono, Select, Textarea, TextLink, TierChip } from '@/components/ui';
 
 export default function ScoreForm({ clients }: { clients: string[] }) {
   const [client, setClient] = useState(clients[0] ?? '');
@@ -40,104 +39,89 @@ export default function ScoreForm({ clients }: { clients: string[] }) {
   }
 
   return (
-    <div>
-      <div className="rounded-xl border border-pq-ash bg-white p-5">
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <label className="text-[13px] font-medium text-pq-slate">Score for client</label>
-          <select
-            value={client}
-            onChange={(e) => setClient(e.target.value)}
-            className="rounded-[6px] border border-pq-ink bg-white px-3 py-1.5 text-[13px] text-pq-charcoal"
-          >
-            {clients.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <Link href="/clients" className="text-[13px] text-pq-blue hover:underline">
-            view this client's ICP →
-          </Link>
-          <span className="basis-full text-[12px] text-pq-fog">
-            Each client has its own ideal-customer profile — the same domain can be HOT for one client and COLD for another.
-          </span>
-        </div>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={4}
-          placeholder={'Paste domains — one per line or comma-separated\nacme.com\nexample.io'}
-          className="w-full rounded-[6px] border border-pq-ink bg-white px-3 py-2 font-mono text-[13px] text-pq-charcoal placeholder:text-pq-silver focus:outline-none focus:ring-2 focus:ring-pq-blue/30"
-        />
-        <div className="mt-4 flex items-center gap-3">
-          <button
-            onClick={run}
-            disabled={running || !input.trim()}
-            className="rounded-lg bg-pq-ink px-5 py-2 text-[14px] font-medium text-white hover:bg-pq-charcoal disabled:opacity-40"
-          >
-            {running ? 'Scoring…' : 'Score leads'}
-          </button>
-          <span className="text-[12px] text-pq-fog">
-            research → Claude scores vs ICP → HOT goes to Slack + HubSpot (deduped)
-          </span>
-        </div>
-      </div>
+    <div className="max-w-3xl">
+      <Card>
+        <CardBody>
+          <div className="mb-4 grid gap-4 sm:grid-cols-[220px_1fr]">
+            <div>
+              <Label htmlFor="client">Client</Label>
+              <Select id="client" value={client} onChange={(e) => setClient(e.target.value)}>
+                {clients.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <p className="self-end pb-1.5 text-[12px] leading-snug text-pq-fog">
+              Leads are scored against this client's ideal-customer profile — the same domain can be HOT for one
+              client and COLD for another. <TextLink href="/clients">View ICPs</TextLink>
+            </p>
+          </div>
+          <Label htmlFor="domains">Domains</Label>
+          <Textarea
+            id="domains"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            rows={4}
+            placeholder={'One per line or comma-separated:\nacme.com\nexample.io'}
+          />
+          <div className="mt-3 flex items-center gap-3">
+            <Button onClick={run} disabled={running || !input.trim()}>
+              {running ? 'Scoring…' : 'Score leads'}
+            </Button>
+            <span className="text-[12px] text-pq-fog">
+              Research → Claude scores against the ICP → HOT goes to Slack and HubSpot, deduped.
+            </span>
+          </div>
+        </CardBody>
+      </Card>
 
       {errors.length > 0 && (
-        <div className="mt-4 rounded-xl border border-pq-ash bg-pq-alt p-4 text-[13px] text-pq-tangerine">
-          {errors.map((e) => (
-            <p key={e}>{e}</p>
-          ))}
-        </div>
+        <Card className="mt-4 border-[#c2410c]/40">
+          <CardBody className="text-[13px] text-[#9a3412]">
+            {errors.map((e) => (
+              <p key={e}>{e}</p>
+            ))}
+          </CardBody>
+        </Card>
       )}
 
       {results.length > 0 && (
-        <div className="mt-6 space-y-3">
-          {results.map((r) => (
-            <div key={`${r.domain}-${r.scoredAt}`} className="rounded-xl border border-pq-ash bg-white p-5">
-              <div className="mb-2 flex items-center gap-3">
-                <span className="font-medium text-pq-ink">{r.domain}</span>
-                <span className="font-semibold text-pq-ink">{r.score}/10</span>
-                <TierBadge tier={r.tier} />
-                {r.mock && (
-                  <span className="rounded-full bg-pq-mist px-2 py-0.5 text-[10px] font-semibold text-pq-lavender">
-                    MOCK
+        <div className="mt-6">
+          <h2 className="mb-2 text-[13px] font-medium text-pq-fog">
+            Results — saved to <TextLink href="/leads">Leads</TextLink>
+          </h2>
+          <div className="divide-y divide-pq-ash rounded-lg border border-pq-ash">
+            {results.map((r) => (
+              <div key={`${r.domain}-${r.scoredAt}`} className="p-4">
+                <div className="mb-2 flex flex-wrap items-center gap-3">
+                  <Mono className="font-medium text-pq-ink">{r.domain}</Mono>
+                  <Mono className="text-pq-ink">{r.score}/10</Mono>
+                  <TierChip tier={r.tier} />
+                  {r.mock && <MockChip />}
+                  <span className="ml-auto">
+                    <TextLink href={`/research?url=${encodeURIComponent(r.domain)}`}>Deep research</TextLink>
                   </span>
-                )}
-                <Link
-                  href={`/research?url=${encodeURIComponent(r.domain)}`}
-                  className="ml-auto text-[13px] text-pq-blue hover:underline"
-                >
-                  deep research →
-                </Link>
+                </div>
+                <dl className="grid gap-x-8 gap-y-2 text-[13px] sm:grid-cols-2">
+                  {(
+                    [
+                      ['Fit', r.fit],
+                      ['Signal', r.signal],
+                      ['Timing', r.timing],
+                      ['Suggested opener', r.opener],
+                    ] as const
+                  ).map(([label, value]) => (
+                    <div key={label}>
+                      <dt className="text-[11px] font-medium text-pq-fog">{label}</dt>
+                      <dd className="mt-0.5 leading-relaxed text-pq-charcoal">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-              <dl className="grid gap-2 text-[14px] text-pq-charcoal sm:grid-cols-2">
-                <div>
-                  <dt className="text-[11px] font-semibold uppercase text-pq-silver">Fit</dt>
-                  <dd>{r.fit}</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-semibold uppercase text-pq-silver">Signal</dt>
-                  <dd>{r.signal}</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-semibold uppercase text-pq-silver">Timing</dt>
-                  <dd>{r.timing}</dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-semibold uppercase text-pq-silver">Suggested opener</dt>
-                  <dd>{r.opener}</dd>
-                </div>
-              </dl>
-            </div>
-          ))}
-          <p className="text-[13px] text-pq-fog">
-            Saved to{' '}
-            <Link href="/leads" className="text-pq-blue hover:underline">
-              Leads
-            </Link>
-            .
-          </p>
+            ))}
+          </div>
         </div>
       )}
     </div>

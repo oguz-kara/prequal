@@ -10,8 +10,8 @@ const config: Config = {
   theme: {
   	extend: {
   		fontFamily: {
-  			display: ['Satoshi', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-  			app: ['var(--font-inter)', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']
+  			app: ['var(--font-inter)', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
   		},
   		colors: {
   			'pq-canvas': '#ffffff',

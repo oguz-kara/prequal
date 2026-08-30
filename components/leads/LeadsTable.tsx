@@ -1,25 +1,9 @@
 'use client';
-// components/leads/LeadsTable.tsx — filterable lead table (tier + client),
-// expandable rows showing the score rationale and suggested opener.
+// components/leads/LeadsTable.tsx — the lead ledger: filterable table,
+// expandable rows with the score rationale. Data is mono; status is a dot.
 import { useMemo, useState } from 'react';
-import type { ScoredLead, Tier } from '@/lib/score';
-
-// Status badge per design system: tinted pill + colored dot + dark text.
-const tierStyles: Record<Tier, { pill: string; dot: string }> = {
-  HOT: { pill: 'bg-orange-50', dot: 'bg-pq-tangerine' },
-  REVIEW: { pill: 'bg-yellow-50', dot: 'bg-yellow-500' },
-  COLD: { pill: 'bg-pq-mist', dot: 'bg-pq-silver' },
-};
-
-export function TierBadge({ tier }: { tier: Tier }) {
-  const t = tierStyles[tier];
-  return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-pq-charcoal ${t.pill}`}>
-      <span className={`inline-block h-1.5 w-1.5 rounded-full ${t.dot}`} />
-      {tier}
-    </span>
-  );
-}
+import type { ScoredLead } from '@/lib/score';
+import { Mono, MockChip, Select, TierChip } from '@/components/ui';
 
 export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
   const [tier, setTier] = useState<string>('ALL');
@@ -33,61 +17,56 @@ export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        {['ALL', 'HOT', 'REVIEW', 'COLD'].map((t) => (
-          <button
-            key={t}
-            onClick={() => setTier(t)}
-            className={`rounded-full px-4 py-1.5 text-[13px] font-medium ${
-              tier === t ? 'bg-pq-charcoal text-white' : 'text-pq-slate hover:bg-pq-mist'
-            }`}
-          >
-            {t}
-          </button>
-        ))}
-        <select
-          value={client}
-          onChange={(e) => setClient(e.target.value)}
-          className="ml-auto rounded-[6px] border border-pq-ink bg-white px-3 py-1.5 text-[13px] text-pq-charcoal"
-        >
-          <option value="ALL">All clients</option>
-          {clients.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
+      <div className="mb-3 flex flex-wrap items-center gap-3">
+        {/* segmented tier filter */}
+        <div className="flex overflow-hidden rounded-md border border-pq-ash">
+          {['ALL', 'HOT', 'REVIEW', 'COLD'].map((t, i) => (
+            <button
+              key={t}
+              onClick={() => setTier(t)}
+              className={`h-8 px-3 text-[12px] font-medium ${i > 0 ? 'border-l border-pq-ash' : ''} ${
+                tier === t ? 'bg-pq-mist text-pq-ink' : 'bg-white text-pq-fog hover:text-pq-ink'
+              }`}
+            >
+              {t === 'ALL' ? 'All' : t}
+            </button>
           ))}
-        </select>
+        </div>
+        <div className="ml-auto w-44">
+          <Select value={client} onChange={(e) => setClient(e.target.value)}>
+            <option value="ALL">All clients</option>
+            {clients.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </Select>
+        </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-pq-ash bg-white">
-        <table className="w-full text-left text-[14px]">
-          <thead className="border-b border-pq-ash bg-pq-alt text-[11px] uppercase tracking-wide text-pq-fog">
+      <div className="overflow-x-auto rounded-lg border border-pq-ash">
+        <table className="w-full text-left text-[13px]">
+          <thead className="border-b border-pq-ash text-[11px] uppercase tracking-wide text-pq-fog">
             <tr>
-              <th className="px-4 py-3">Domain</th>
-              <th className="px-4 py-3">Client</th>
-              <th className="px-4 py-3">Score</th>
-              <th className="px-4 py-3">Tier</th>
-              <th className="px-4 py-3">Scored</th>
-              <th className="px-4 py-3" />
+              <th className="px-3 py-2 font-medium">Domain</th>
+              <th className="px-3 py-2 font-medium">Client</th>
+              <th className="px-3 py-2 font-medium">Score</th>
+              <th className="px-3 py-2 font-medium">Tier</th>
+              <th className="px-3 py-2 font-medium">Scored</th>
+              <th className="w-8 px-3 py-2" />
             </tr>
           </thead>
           <tbody>
-            {filtered.map((l, i) => {
+            {filtered.map((l) => {
               const key = `${l.domain}-${l.clientId}-${l.scoredAt}`;
               return (
-                <FragmentRow
-                  key={key}
-                  lead={l}
-                  isOpen={open === key}
-                  onToggle={() => setOpen(open === key ? null : key)}
-                  zebra={i % 2 === 1}
-                />
+                <Row key={key} lead={l} isOpen={open === key} onToggle={() => setOpen(open === key ? null : key)} />
               );
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-pq-silver">
-                  No leads match this filter. Run <code className="rounded bg-pq-mist px-1">npm run batch</code> first.
+                <td colSpan={6} className="px-3 py-10 text-center text-[13px] text-pq-fog">
+                  No leads match this filter. Run <Mono>npm run batch</Mono> to score the test set.
                 </td>
               </tr>
             )}
@@ -98,43 +77,32 @@ export default function LeadsTable({ leads }: { leads: ScoredLead[] }) {
   );
 }
 
-function FragmentRow({
-  lead,
-  isOpen,
-  onToggle,
-  zebra,
-}: {
-  lead: ScoredLead;
-  isOpen: boolean;
-  onToggle: () => void;
-  zebra: boolean;
-}) {
+function Row({ lead, isOpen, onToggle }: { lead: ScoredLead; isOpen: boolean; onToggle: () => void }) {
   return (
     <>
-      <tr
-        onClick={onToggle}
-        className={`cursor-pointer border-b border-pq-ash hover:bg-pq-mist/60 ${zebra ? 'bg-pq-alt' : ''}`}
-      >
-        <td className="px-4 py-3 font-medium text-pq-ink">
-          {lead.domain}
+      <tr onClick={onToggle} className="cursor-pointer border-b border-pq-ash last:border-b-0 hover:bg-pq-alt">
+        <td className="px-3 py-2">
+          <Mono className="text-pq-ink">{lead.domain}</Mono>
           {lead.mock && (
-            <span className="ml-2 rounded-full bg-pq-mist px-2 py-0.5 text-[10px] font-semibold text-pq-lavender">
-              MOCK
+            <span className="ml-2 align-middle">
+              <MockChip />
             </span>
           )}
         </td>
-        <td className="px-4 py-3 text-pq-slate">{lead.clientId}</td>
-        <td className="px-4 py-3 font-semibold text-pq-ink">{lead.score}/10</td>
-        <td className="px-4 py-3">
-          <TierBadge tier={lead.tier} />
+        <td className="px-3 py-2 text-pq-slate">{lead.clientId}</td>
+        <td className="px-3 py-2">
+          <Mono className="font-medium text-pq-ink">{lead.score}/10</Mono>
         </td>
-        <td className="px-4 py-3 text-pq-fog">{new Date(lead.scoredAt).toLocaleDateString()}</td>
-        <td className="px-4 py-3 text-pq-silver">{isOpen ? '▾' : '▸'}</td>
+        <td className="px-3 py-2">
+          <TierChip tier={lead.tier} />
+        </td>
+        <td className="px-3 py-2 text-pq-fog">{new Date(lead.scoredAt).toLocaleDateString()}</td>
+        <td className="px-3 py-2 text-center text-pq-silver">{isOpen ? '–' : '+'}</td>
       </tr>
       {isOpen && (
-        <tr className="border-b border-pq-ash bg-pq-alt">
-          <td colSpan={6} className="px-6 py-4">
-            <dl className="grid gap-3 text-[14px] sm:grid-cols-2">
+        <tr className="border-b border-pq-ash bg-pq-alt last:border-b-0">
+          <td colSpan={6} className="px-4 py-3">
+            <dl className="grid gap-x-8 gap-y-2 text-[13px] sm:grid-cols-2">
               <Rationale label="Fit" value={lead.fit} />
               <Rationale label="Signal" value={lead.signal} />
               <Rationale label="Timing" value={lead.timing} />
@@ -150,8 +118,8 @@ function FragmentRow({
 function Rationale({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-semibold uppercase tracking-wide text-pq-silver">{label}</dt>
-      <dd className="mt-1 text-pq-charcoal">{value}</dd>
+      <dt className="text-[11px] font-medium text-pq-fog">{label}</dt>
+      <dd className="mt-0.5 leading-relaxed text-pq-charcoal">{value}</dd>
     </div>
   );
 }

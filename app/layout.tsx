@@ -24,6 +24,11 @@ const reckless = localFont({
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
+const geistMono = localFont({
+  src: [{ path: "./fonts/GeistMonoVF.woff", weight: "100 900" }],
+  variable: "--font-geist-mono",
+});
+
 export const metadata: Metadata = {
   title: "Prequal — AI Lead Research & ICP Scoring",
   description: "Research any company, score it against your client\u0027s ICP with Claude, and route HOT leads to your CRM.",
@@ -47,12 +52,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        {/* Satoshi (display) — Fontshare */}
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700&display=swap" rel="stylesheet" />
-      </head>
       <body
-        className={`${abcdDiatype.variable} ${reckless.variable} ${inter.variable} antialiased`}
+        className={`${abcdDiatype.variable} ${reckless.variable} ${inter.variable} ${geistMono.variable} antialiased`}
       >
         {children}
         <Analytics />

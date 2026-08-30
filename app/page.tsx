@@ -10,7 +10,8 @@ export default async function Home() {
   const clients = await listIcpClients();
   return (
     <PageShell
-      title="Score inbound leads against your client's ICP"
+      active="/"
+      title="Score leads"
       subtitle="Paste company domains. Prequal researches each one, has Claude score it 0–10 with a rationale, and routes HOT leads to Slack + HubSpot — without burning paid enrichment credits on bad leads."
       hasMockData={process.env.PREQUAL_MOCK === '1'}
     >

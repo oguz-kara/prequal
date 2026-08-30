@@ -9,8 +9,9 @@ export default async function LeadsPage() {
   const leads = (await listLeads()).sort((a, b) => b.scoredAt.localeCompare(a.scoredAt));
   return (
     <PageShell
+      active="/leads"
       title="Leads"
-      subtitle={`${leads.length} scored leads — click a row for the rationale`}
+      subtitle={`${leads.length} scored leads. Click a row to see why it got its score.`}
       hasMockData={leads.some((l) => l.mock)}
     >
       <LeadsTable leads={leads} />

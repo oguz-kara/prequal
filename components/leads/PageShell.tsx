@@ -1,54 +1,64 @@
-// components/leads/PageShell.tsx — shared shell for the app pages, in the
-// project design language (docs/design-system): white canvas, 1px ash
-// hairline borders, Satoshi display headings, compact Inter body.
+// components/leads/PageShell.tsx — app chrome: 48px topbar with underline
+// tabs, compact title block. Built on the primitives in components/ui.tsx.
 import Link from 'next/link';
+
+const tabs = [
+  ['Score', '/'],
+  ['Leads', '/leads'],
+  ['Dashboard', '/dashboard'],
+  ['Clients', '/clients'],
+] as const;
 
 export default function PageShell({
   title,
   subtitle,
   hasMockData,
+  active,
   children,
 }: {
   title: string;
   subtitle: string;
   hasMockData: boolean;
+  active?: string;
   children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen bg-pq-canvas font-app text-pq-charcoal">
+    <main className="min-h-screen bg-white font-app text-pq-charcoal">
       <div className="border-b border-pq-ash">
-        <nav className="mx-auto flex max-w-5xl items-center gap-1 px-4 py-3 text-[14px] sm:px-8">
-          <Link href="/" className="mr-4 font-display text-[17px] font-bold tracking-tight text-pq-ink">
-            Prequal
+        <nav className="mx-auto flex h-12 max-w-5xl items-stretch gap-5 px-4 sm:px-6">
+          <Link href="/" className="flex items-center font-mono text-[13px] font-semibold tracking-tight text-pq-ink">
+            prequal
           </Link>
-          {[
-            ['Score', '/'],
-            ['Leads', '/leads'],
-            ['Dashboard', '/dashboard'],
-            ['Clients', '/clients'],
-          ].map(([label, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="rounded-full px-4 py-1.5 text-pq-slate hover:bg-pq-mist hover:text-pq-ink"
-            >
-              {label}
-            </Link>
-          ))}
+          <div className="flex items-stretch gap-4">
+            {tabs.map(([label, href]) => {
+              const isActive = active === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`flex items-center border-b-2 px-0.5 text-[13px] ${
+                    isActive
+                      ? 'border-pq-ink font-medium text-pq-ink'
+                      : 'border-transparent text-pq-fog hover:text-pq-ink'
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
+          {hasMockData && (
+            <span className="ml-auto flex items-center gap-1.5 text-[11px] text-pq-fog">
+              <span className="h-1.5 w-1.5 rounded-[1px] bg-pq-lavender" />
+              mock data — not measured results
+            </span>
+          )}
         </nav>
       </div>
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <header className="mb-6">
-          <h1 className="font-display text-heading font-medium tracking-tight text-pq-ink" style={{ fontSize: 30 }}>
-            {title}
-          </h1>
-          <p className="mt-1 text-[14px] leading-relaxed text-pq-fog">{subtitle}</p>
-          {hasMockData && (
-            <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-pq-ash bg-pq-alt px-3 py-1.5 text-[12px] font-medium text-pq-slate">
-              <span className="inline-block h-2 w-2 rounded-full bg-pq-lavender" />
-              Contains MOCK data (PREQUAL_MOCK=1) — demo only, not measured results.
-            </p>
-          )}
+          <h1 className="text-[20px] font-semibold tracking-[-0.01em] text-pq-ink">{title}</h1>
+          <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-pq-fog">{subtitle}</p>
         </header>
         {children}
       </div>
