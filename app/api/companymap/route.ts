@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from 'ai';
 import { z } from 'zod';
+import { isMock } from '@/lib/score';
 
 export const maxDuration = 100;
 
@@ -17,6 +18,26 @@ export async function POST(req: NextRequest) {
     const mainpageText = JSON.stringify(mainpage, null, 2);
 
     // Define a recursive schema for mind map nodes
+    if (isMock()) {
+      return NextResponse.json({
+        result: {
+          companyName: '[MOCK] Company',
+          rootNode: {
+            title: '[MOCK] Company',
+            children: [
+              {
+                title: 'Mock mode',
+                description: 'PREQUAL_MOCK=1 — no Claude call was made.',
+                children: [
+                  { title: 'How to disable', description: 'Add Anthropic credits, restart dev without PREQUAL_MOCK.' },
+                ],
+              },
+            ],
+          },
+        },
+      });
+    }
+
     const mindMapNodeSchema = z.object({
       title: z.string(),
       children: z.array(z.object({
@@ -35,7 +56,7 @@ export async function POST(req: NextRequest) {
     });
 
     const { object } = await generateObject({
-      model: anthropic('claude-3-7-sonnet-latest'),
+      model: anthropic(process.env.PREQUAL_MODEL ?? 'claude-sonnet-5'),
       schema: mindMapSchema,
       output: 'object',
       system: "Create clear, concise mind maps that help users quickly understand companies. Use simple English and focus on the most important aspects.",

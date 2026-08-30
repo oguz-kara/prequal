@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from 'ai';
 import { z } from 'zod';
+import { isMock } from '@/lib/score';
 
 export const maxDuration = 100;
 
@@ -12,6 +13,16 @@ export async function POST(req: NextRequest) {
     
     if (!subpages || !mainpage) {
       return NextResponse.json({ error: 'Mainpage or subpage content is required' }, { status: 400 });
+    }
+
+    if (isMock()) {
+      return NextResponse.json({
+        result: [
+          { heading: '🧪 Mock mode', text: 'PREQUAL_MOCK=1 — no Claude call was made. Add Anthropic credits and restart without the flag for a real summary.' },
+          { heading: '🏢 What they do', text: '[MOCK] Placeholder company summary for UI development.' },
+          { heading: '📈 Signals', text: '[MOCK] Placeholder growth and hiring signals.' },
+        ],
+      });
     }
 
     const subpagesText = JSON.stringify(subpages, null, 2);
@@ -26,7 +37,7 @@ export async function POST(req: NextRequest) {
     });
 
     const { object } = await generateObject({
-      model: anthropic('claude-3-7-sonnet-latest'),
+      model: anthropic(process.env.PREQUAL_MODEL ?? 'claude-sonnet-5'),
       schema: summarySchema,
       output: 'object',
       system: "All the output content should be in simple english. Don't use any difficult words. Keep sentences short and simple.  Use unique emojis for each heading.",
