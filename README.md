@@ -1,3 +1,5 @@
+Demo project built to show what I can build. Not a client project.
+
 # Prequal
 
 **AI lead research & ICP fit scoring for outbound agencies.** Paste a CSV of

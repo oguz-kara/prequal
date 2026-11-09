@@ -37,3 +37,12 @@ next-env.d.ts
 
 # Prequal
 data/out/
+
+# GitHub prep
+dist
+.turbo
+.env
+.env.*
+!.env.example
+*.key
+*.log
