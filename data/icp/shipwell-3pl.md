@@ -1,7 +1,7 @@
-# ICP — ShipWell 3PL (kurgusal müşteri #2)
+# ICP: ShipWell 3PL (fictional client #2)
 
-Ürün: e-ticaret markalarına fulfillment. Hedef:
-- Shopify/WooCommerce D2C markaları, aylık 1k–20k sipariş
-- ABD içi depo ihtiyacı; mevcut 3PL'den şikâyet sinyali
-- Pozitif: hızlı büyüme (işe alım, reklam harcaması), TikTok Shop varlığı
-- Negatif: dijital ürün, dropshipping, aylık <300 sipariş
+Product: fulfillment for e-commerce brands. Target:
+- Shopify/WooCommerce D2C brands with 1k–20k orders a month
+- Need warehousing in the US; signs they are unhappy with their current 3PL
+- Positive: fast growth (hiring, ad spend), a TikTok Shop presence
+- Negative: digital products, dropshipping, under 300 orders a month

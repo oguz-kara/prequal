@@ -1,7 +1,7 @@
-# ICP — SecureStack (kurgusal müşteri #3)
+# ICP: SecureStack (fictional client #3)
 
-Ürün: SOC2 uyumluluk otomasyonu. Hedef:
-- 30–300 çalışanlı B2B SaaS; enterprise müşteriye satmaya başlayanlar
-- Pozitif: güvenlik/compliance ilanı, "SOC2" bahsi, yeni enterprise logo
-  duyurusu, AWS/GCP stack
-- Negatif: ajans, donanım, halihazırda Vanta/Drata kullandığı bilinenler
+Product: SOC 2 compliance automation. Target:
+- B2B SaaS with 30–300 employees that is starting to sell to enterprises
+- Positive: security or compliance job posts, mentions of "SOC2", new
+  enterprise customer announcements, AWS/GCP stack
+- Negative: agencies, hardware, companies known to use Vanta/Drata already
